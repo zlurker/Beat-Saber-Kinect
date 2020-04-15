@@ -1,21 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody))]
 public class Saber : MonoBehaviour {
 
     public int mode;
+    public GameObject swordTip;
+    public float threshold; 
 
     Rigidbody rb;
 
-    ContactPoint[] contacts;
+    Vector3 prevPos;
+    Vector3 currDir;
 
     void Start() {
         rb = GetComponent<Rigidbody>();
         rb.useGravity = false;
         rb.constraints = RigidbodyConstraints.FreezeAll;
         rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+
+        threshold = 0.8f;
     }
 
     private void OnCollisionEnter(Collision collision) {
@@ -26,37 +32,22 @@ public class Saber : MonoBehaviour {
             Debug.Log(id);
             collision.gameObject.SetActive(false);
         }*/
-        if(collision.gameObject.tag == "Beat") {
-            //Debug.Log("Hit");
-            contacts = collision.contacts;
-            InGameEvents.instance.RemoveBeat(int.Parse(collision.gameObject.name), collision.transform.position - GetCenterOfPoints(collision.contacts), mode);
-        }
+        if(collision.gameObject.tag == "Beat")
+            InGameEvents.instance.RemoveBeat(int.Parse(collision.gameObject.name), swordTip.transform.position - prevPos, mode);
+
         //Destroy(collision.gameObject);
     }
 
-    private void Update() {
-        if(contacts != null) {
-            for(int i = 0; i < contacts.Length; i++)
-                Debug.DrawLine(transform.position, contacts[i].point, Color.red);
+    void Update() {
+        //float totalMovement = Mathf.Abs(Mathf.Abs(transform.position.x) - Mathf.Abs(prevPos.x)) + Mathf.Abs(Mathf.Abs(transform.position.y) - Mathf.Abs(prevPos.y)) + Mathf.Abs(Mathf.Abs(transform.position.z) - Mathf.Abs(prevPos.z));
 
-            Debug.DrawLine(transform.position, GetCenterOfPoints(contacts), Color.black);
-        }
-    }
+        float totalMovement = (transform.position - prevPos).magnitude;
 
-    Vector3 GetCenterOfPoints(ContactPoint[] contacts) {
-        Vector3 min = contacts[0].point;
-        Vector3 max = contacts[0].point;
+        if(totalMovement >= threshold)
+            prevPos = swordTip.transform.position;
 
-        for(int i = 1; i < contacts.Length; i++) {
-            for(int j = 0; j < 3; j++) {
-                if(min[j] > contacts[i].point[j])
-                    min[j] = contacts[i].point[j];
+        Debug.DrawLine(swordTip.transform.position, prevPos, Color.red);
 
-                if(max[j] < contacts[i].point[j])
-                    max[j] = contacts[i].point[j];
-            }
-        }
 
-        return (min + max) / 2;
     }
 }

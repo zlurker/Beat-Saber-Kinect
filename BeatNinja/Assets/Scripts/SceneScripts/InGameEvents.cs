@@ -42,20 +42,19 @@ public class InGameEvents : MonoBehaviour {
         songPlayer.Play();
     }
 
-    public void RemoveBeat(int id, Vector3 movement, int saberType) {
-
+    public void RemoveBeat(int id, Vector3 dir, int saberType) {
         
         if(!BeatmapParser.beatmap._notes[id].noteDestroyed) {
-            Debug.Log("InitialMovement:" + movement);
+            Debug.Log("InitialMovement:" + dir);
 
             bool dirWrong = false;
-            movement.x /= Mathf.Abs(movement.x);
-            movement.y /= Mathf.Abs(movement.y);
-            movement.z = 0;
+            dir.x /= Mathf.Abs(dir.x);
+            dir.y /= Mathf.Abs(dir.y);
+            dir.z = 0;
 
             for(int i = 0; i < 2; i++)
-                if(movement[i] != 0)
-                    if(movement[i] != BeatmapCreator.directionalCuts[BeatmapParser.beatmap._notes[id]._cutDirection][i])
+                if(BeatmapCreator.directionalCuts[BeatmapParser.beatmap._notes[id]._cutDirection][i] != 0)
+                    if(dir[i] != BeatmapCreator.directionalCuts[BeatmapParser.beatmap._notes[id]._cutDirection][i])
                         dirWrong = true;
 
             if(!dirWrong) {
@@ -64,7 +63,7 @@ public class InGameEvents : MonoBehaviour {
             } else
                 HandleCombo(ComboType.Reset);
 
-            Debug.LogFormat("MovementGenerated:{0}, GivenDirection:{1}, BeatID:{2}", movement, BeatmapCreator.directionalCuts[BeatmapParser.beatmap._notes[id]._cutDirection], id);
+            Debug.LogFormat("MovementGenerated:{0}, GivenDirection:{1}, BeatID:{2}", dir, BeatmapCreator.directionalCuts[BeatmapParser.beatmap._notes[id]._cutDirection], id);
 
             objectClearer.DestroyBeat(id);
             BeatmapCreator.dataInstance._notes[id].noteDestroyed = true;
@@ -113,7 +112,6 @@ public class InGameEvents : MonoBehaviour {
     int ProcessBeat(int beatId) {
         int judgement = -1;
 
-
         judgement = ScoreWindow.JudgementRange(RhythmGameMath.GetTimeFromBPM(BeatmapParser.beatmap._notes[beatId]._time, BeatmapParser.beatmap._beatsPerMinute) - InGameEvents.songPlayer.time);
 
         switch(ScoreWindow.scoreWindow[judgement].n) {
@@ -154,7 +152,7 @@ public class InGameEvents : MonoBehaviour {
                 break;
 
             case ComboType.Reset:
-                currCombo = 0;
+                //currCombo = 0;
                 break;
         }
 

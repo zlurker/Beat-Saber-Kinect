@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class InGameUI {
 
-    
+
     Canvas uiInterface;
 
     public Text comboTracker;
@@ -24,10 +24,14 @@ public class InGameUI {
         songDifficulty = uiInterface.transform.Find("songDifficulty").GetComponent<Text>();
         songImage = uiInterface.transform.Find("songImage").GetComponent<RawImage>();
 
+
+
         WWW image = new WWW("file:///" + Path.Combine(BeatmapLoader.beatmapsInfo[MenuScript.menuIndexes[0]].filePath,
         BeatmapLoader.beatmapsInfo[MenuScript.menuIndexes[0]].songData.coverImagePath));
 
         songImage.texture = image.texture;
+
+
         songName.text = BeatmapLoader.beatmapsInfo[MenuScript.menuIndexes[0]].songData.songName;
         songSubName.text = BeatmapLoader.beatmapsInfo[MenuScript.menuIndexes[0]].songData.songSubName;
         songDifficulty.text = BeatmapLoader.beatmapsInfo[MenuScript.menuIndexes[0]].songData.difficultyLevels[MenuScript.menuIndexes[1]].difficulty;

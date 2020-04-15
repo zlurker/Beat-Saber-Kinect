@@ -33,7 +33,8 @@ public class BeatmapCreator : MonoBehaviour {
         new Vector3(-1,1,0),
         new Vector3(1,1,0),
         new Vector3(-1,-1,0),
-        new Vector3(1,-1,0)
+        new Vector3(1,-1,0),
+        new Vector3(0,0,0)
     };
 
     public static Material obsMaterial = Resources.Load("WireframeTransparent") as Material;
